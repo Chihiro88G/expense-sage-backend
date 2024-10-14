@@ -1,3 +1,5 @@
+DROP TABLE public.currency;
+
 CREATE TABLE public.currency (
   id SERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,

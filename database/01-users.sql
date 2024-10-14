@@ -1,3 +1,5 @@
+DROP TABLE public.users;
+
 CREATE TABLE public.users (
   id SERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,

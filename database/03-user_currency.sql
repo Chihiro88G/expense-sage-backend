@@ -1,3 +1,5 @@
+DROP TABLE public.user_currency;
+
 CREATE TABLE public.user_currency (
   id SERIAL PRIMARY KEY,
   user_id INT NOT NULL,
