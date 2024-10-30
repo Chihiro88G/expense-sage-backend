@@ -3,30 +3,30 @@ import { Entity, PrimaryGeneratedColumn, Column } from "typeorm"
 @Entity()
 export class Category {
   @PrimaryGeneratedColumn()
-  id!: number
+  id: number;
 
   @Column({
     type: 'varchar',  
     length: 50,
     nullable: false,
   })
-  name!: string
+  name: string;
 
   @Column({
     type: 'integer',
     nullable: false,
   })
-  category_type!: number
+  category_type: number;
 
   @Column({
     type: 'timestamp',
     nullable: false,
   })
-  created_at!: Date
+  created_at: Date;
 
   @Column({
     type: 'timestamp',
     nullable: false,
   })
-  modified_at!: Date
+  modified_at: Date;
 }
