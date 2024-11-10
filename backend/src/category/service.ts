@@ -5,7 +5,7 @@ import { UserCategory } from '../user_category/entity';
 import { Category } from './entity';
 import { CategoryForm, CategoryModel, CategoryType } from './type';
 
-export async function findAllByUserId(user: UserType): Promise<CategoryModel[]> {
+export async function findAllByUser(user: UserType): Promise<CategoryModel[]> {
   const defaultCategories = await db.getRepository(Category).find(
     {where: { category_type: 0 }}
   );
@@ -43,7 +43,7 @@ export async function findAllByUserId(user: UserType): Promise<CategoryModel[]> 
   return categories;
 }
 
-export async function getOneByCategoryIdAndUserId(categoryId: number, userId: number): Promise<CategoryModel> {
+export async function findOneByCategoryIdAndUserId(categoryId: number, userId: number): Promise<CategoryModel> {
   const category = await db.getRepository(Category)
     .createQueryBuilder('cat')
     .leftJoinAndSelect('user_category', 'uscat', 'cat.id = uscat.category_id')
@@ -92,4 +92,23 @@ export async function create(category: CategoryForm): Promise<void> {
   newUserCategory.user = user;
 
   await db.getRepository(UserCategory).insert(newUserCategory);
+}
+
+export async function remove(categoryId: number, userId: number): Promise<void> {
+  const user = await db.getRepository(Users).findOneBy({ id: userId });
+  if (!user) throw new Error('no user found');
+
+  const categoryToRemove = await db.getRepository(Category).findOneBy({
+    id: categoryId,
+  });
+  if (!categoryToRemove) throw new Error('no caegory found');
+
+  const userCategoryToRemove = await db.getRepository(UserCategory).findOneBy({
+    user: { id: user.id },
+    category: { id: categoryToRemove.id }
+  });
+  if (!userCategoryToRemove) throw new Error('no user-category found');
+
+  await db.getRepository(UserCategory).remove(userCategoryToRemove);
+  await db.getRepository(Category).remove(categoryToRemove);
 }

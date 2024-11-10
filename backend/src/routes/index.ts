@@ -7,4 +7,4 @@ export const routes = Router();
 routes.get('/category', category.get);
 routes.post('/category', category.post);
 routes.patch('/category/:categoryId', category.patch);
-// routes.delete('/category/:categoryId', category.delete);
+routes.delete('/category/:categoryId', category.delete);
