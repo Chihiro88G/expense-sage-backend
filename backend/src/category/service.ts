@@ -1,7 +1,9 @@
 import db from '../database';
+import { Users } from '../user/entity';
 import { UserType } from '../user/type';
+import { UserCategory } from '../user_category/entity';
 import { Category } from './entity';
-import { CategoryModel, CategoryType, CategoryUpdate } from './type';
+import { CategoryForm, CategoryModel, CategoryType } from './type';
 
 export async function findAllByUserId(user: UserType): Promise<CategoryModel[]> {
   const defaultCategories = await db.getRepository(Category).find(
@@ -59,7 +61,7 @@ export async function getOneByCategoryIdAndUserId(categoryId: number, userId: nu
   };
 }
 
-export async function update(categoryId: number, category: CategoryUpdate): Promise<void> {
+export async function update(categoryId: number, category: CategoryForm): Promise<void> {
   const categoryToUpdate = await db.getRepository(Category)
     .findOneBy({
       id: categoryId,
@@ -71,4 +73,23 @@ export async function update(categoryId: number, category: CategoryUpdate): Prom
   categoryToUpdate.modified_at = new Date();
 
   await db.getRepository(Category).save(categoryToUpdate);
+}
+
+export async function create(category: CategoryForm): Promise<void> {
+  const newCategory = new Category();
+  newCategory.name = category.categoryName;
+  newCategory.category_type = 1;
+  newCategory.created_at = new Date();
+  newCategory.modified_at = new Date();
+
+  const savedCategory = await db.getRepository(Category).save(newCategory);
+
+  const user = await db.getRepository(Users).findOneBy({ id: category.userId });
+  if (!user) throw new Error('no user found');
+
+  const newUserCategory = new UserCategory();
+  newUserCategory.category = savedCategory;
+  newUserCategory.user = user;
+
+  await db.getRepository(UserCategory).insert(newUserCategory);
 }

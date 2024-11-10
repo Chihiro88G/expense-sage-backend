@@ -1,4 +1,5 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { UserCategory } from '../user_category/entity';
 
 @Entity()
 export class Category {
@@ -29,4 +30,7 @@ export class Category {
     nullable: false,
   })
     modified_at: Date;
+
+  @OneToMany(() => UserCategory, userCategory => userCategory.category)
+    userCategoriess: UserCategory[];
 }

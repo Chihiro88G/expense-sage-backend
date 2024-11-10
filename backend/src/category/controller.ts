@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import * as userService from '../user/service';
 import * as service from './service';
-import { CategoryUpdate } from './type';
+import { CategoryForm } from './type';
 
 class CategoryController {
   async get(req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -23,7 +23,7 @@ class CategoryController {
       const categoryId = req.params.categoryId;
       if (!categoryId) throw new Error('category id not defined');
 
-      const categoryToUpdate: CategoryUpdate = req.body;
+      const categoryToUpdate: CategoryForm = req.body;
       if (!categoryToUpdate) throw new Error('req body not found');
 
       const category = await service.getOneByCategoryIdAndUserId(parseInt(categoryId.toString()), categoryToUpdate.userId);
@@ -36,9 +36,27 @@ class CategoryController {
     }
   }
 
-  async post(req: Request, res: Response): Promise<void> {
-    res.send('from category post controller');
+  async post(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const newCategory: CategoryForm = req.body;
+      if (!newCategory) throw new Error('req body not found');
+
+      await service.create(newCategory);
+
+      res.status(200).send();
+
+    } catch (error) {
+      next(error);
+    }
   }
+
+  // async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
+  //   try {
+
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
 }
 
 export default new CategoryController();

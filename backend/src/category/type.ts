@@ -9,7 +9,7 @@ export type CategoryModel = {
   categoryType: CategoryType,
 }
 
-export type CategoryUpdate = {
+export type CategoryForm = {
   categoryName: string,
   userId: number,
 }
