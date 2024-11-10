@@ -8,3 +8,8 @@ export type CategoryModel = {
   name: string,
   categoryType: CategoryType,
 }
+
+export type CategoryUpdate = {
+  categoryName: string,
+  userId: number,
+}
