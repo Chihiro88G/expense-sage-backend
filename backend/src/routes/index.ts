@@ -4,7 +4,8 @@ import category from '../category/controller';
 export const routes = Router();
 
 // category
-routes.get('/category', category.get);
-routes.post('/category', category.post);
-routes.patch('/category/:categoryId', category.patch);
-routes.delete('/category/:categoryId', category.delete);
+routes.get('/user/:userId/category', category.get);
+// routes.get('/user/:userId/category/:categoryId', category.getOne);
+routes.post('/user/:userId/category', category.post);
+routes.patch('/user/:userId/category/:categoryId', category.patch);
+routes.delete('/user/:userId/category/:categoryId', category.delete);

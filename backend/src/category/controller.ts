@@ -1,12 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import * as userService from '../user/service';
 import * as service from './service';
-import { CategoryForm } from './type';
 
 class CategoryController {
   async get(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const userId = req.query.userId;
+      const userId = req.params.userId;
       if (!userId) throw new Error('user id not defined');
 
       const user = await userService.findOneById(parseInt(userId.toString()));
@@ -19,16 +18,27 @@ class CategoryController {
     }
   }
 
+  // async getOne(req: Request, res: Response, next: NextFunction): Promise<void> {
+  //   try {
+  //     const categoryId = req.params.categoryId;
+  //     if (!categoryId) throw new Error('category id not defined');
+
+
+  //   } catch (error) {
+  //     next(error);
+  //   }
+  // }
+
   async patch(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const categoryId = req.params.categoryId;
-      if (!categoryId) throw new Error('category id not defined');
+      const { categoryId, userId } = req.params;
+      if (!categoryId || !userId) throw new Error('category or user id not defined');
 
-      const categoryToUpdate: CategoryForm = req.body;
-      if (!categoryToUpdate) throw new Error('req body not found');
+      const categoryName = req.body.categoryName;
+      if (!categoryName) throw new Error('category name not specified');
 
-      const category = await service.findOneByCategoryIdAndUserId(parseInt(categoryId.toString()), categoryToUpdate.userId);
-      await service.update(category.id, categoryToUpdate);
+      const category = await service.findOneByCategoryIdAndUserId(parseInt(categoryId), parseInt(userId));
+      await service.update(category.id, categoryName);
 
       res.status(200).send();
 
@@ -39,10 +49,13 @@ class CategoryController {
 
   async post(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const newCategory: CategoryForm = req.body;
-      if (!newCategory) throw new Error('req body not found');
+      const userId = req.params.userId;
+      if (!userId) throw new Error('user id not defined');
 
-      await service.create(newCategory);
+      const categoryName = req.body.categoryName;
+      if (!categoryName) throw new Error('category name not specified');
+
+      await service.create(parseInt(userId), categoryName);
 
       res.status(200).send();
 
@@ -53,16 +66,13 @@ class CategoryController {
 
   async delete(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
-      const categoryId = parseInt(req.params.categoryId);
-      if (!categoryId) throw new Error('category id not defined');
+      const { categoryId, userId } = req.params;
+      if (!categoryId || !userId) throw new Error('category or user id not defined');
 
-      const userId = req.query.userId;
-      if (!userId) throw new Error('user id not defined');
-
-      const user = await userService.findOneById(parseInt(userId.toString()));
+      const user = await userService.findOneById(parseInt(userId));
       if (!user) throw new Error('user not found');
 
-      await service.remove(categoryId, parseInt(userId.toString()));
+      await service.remove(parseInt(categoryId), user.id);
 
       res.status(200).send();
 

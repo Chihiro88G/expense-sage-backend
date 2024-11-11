@@ -3,7 +3,7 @@ import { Users } from '../user/entity';
 import { UserType } from '../user/type';
 import { UserCategory } from '../user_category/entity';
 import { Category } from './entity';
-import { CategoryForm, CategoryModel, CategoryType } from './type';
+import { CategoryModel, CategoryType } from './type';
 
 export async function findAllByUser(user: UserType): Promise<CategoryModel[]> {
   const defaultCategories = await db.getRepository(Category).find(
@@ -61,7 +61,7 @@ export async function findOneByCategoryIdAndUserId(categoryId: number, userId: n
   };
 }
 
-export async function update(categoryId: number, category: CategoryForm): Promise<void> {
+export async function update(categoryId: number, categoryName: string): Promise<void> {
   const categoryToUpdate = await db.getRepository(Category)
     .findOneBy({
       id: categoryId,
@@ -69,22 +69,22 @@ export async function update(categoryId: number, category: CategoryForm): Promis
 
   if (!categoryToUpdate) throw new Error('category not found');
 
-  categoryToUpdate.name = category.categoryName;
+  categoryToUpdate.name = categoryName;
   categoryToUpdate.modified_at = new Date();
 
   await db.getRepository(Category).save(categoryToUpdate);
 }
 
-export async function create(category: CategoryForm): Promise<void> {
+export async function create(userId: number, categoryName: string): Promise<void> {
   const newCategory = new Category();
-  newCategory.name = category.categoryName;
+  newCategory.name = categoryName;
   newCategory.category_type = 1;
   newCategory.created_at = new Date();
   newCategory.modified_at = new Date();
 
   const savedCategory = await db.getRepository(Category).save(newCategory);
 
-  const user = await db.getRepository(Users).findOneBy({ id: category.userId });
+  const user = await db.getRepository(Users).findOneBy({ id: userId });
   if (!user) throw new Error('no user found');
 
   const newUserCategory = new UserCategory();

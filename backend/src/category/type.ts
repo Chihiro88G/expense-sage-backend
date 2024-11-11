@@ -8,8 +8,3 @@ export type CategoryModel = {
   name: string,
   categoryType: CategoryType,
 }
-
-export type CategoryForm = {
-  categoryName: string,
-  userId: number,
-}
