@@ -18,16 +18,29 @@ class CategoryController {
     }
   }
 
-  // async getOne(req: Request, res: Response, next: NextFunction): Promise<void> {
-  //   try {
-  //     const categoryId = req.params.categoryId;
-  //     if (!categoryId) throw new Error('category id not defined');
+  async getOne(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { categoryId, userId } = req.params;
+      if (!categoryId || !userId) throw new Error('category or user id not defined');
 
+      const user = await userService.findOneById(parseInt(userId));
 
-  //   } catch (error) {
-  //     next(error);
-  //   }
-  // }
+      const defaultCategory = await service.findDefaultCategoryByCategoryId(parseInt(categoryId));
+      if (defaultCategory) {
+        res.json(defaultCategory);
+        res.status(200).send();
+      }
+
+      const userDefinedCategory = await service.findUserDefinedCategoryByCategoryIdAndUserId(parseInt(categoryId), user.id);
+      if (!userDefinedCategory) throw new Error('no category found');
+
+      res.json(userDefinedCategory);
+      res.status(200).send();
+
+    } catch (error) {
+      next(error);
+    }
+  }
 
   async patch(req: Request, res: Response, next: NextFunction): Promise<void> {
     try {
@@ -37,7 +50,7 @@ class CategoryController {
       const categoryName = req.body.categoryName;
       if (!categoryName) throw new Error('category name not specified');
 
-      const category = await service.findOneByCategoryIdAndUserId(parseInt(categoryId), parseInt(userId));
+      const category = await service.findUserDefinedCategoryByCategoryIdAndUserId(parseInt(categoryId), parseInt(userId));
       await service.update(category.id, categoryName);
 
       res.status(200).send();

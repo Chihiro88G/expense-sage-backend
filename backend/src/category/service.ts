@@ -43,7 +43,22 @@ export async function findAllByUser(user: UserType): Promise<CategoryModel[]> {
   return categories;
 }
 
-export async function findOneByCategoryIdAndUserId(categoryId: number, userId: number): Promise<CategoryModel> {
+export async function findDefaultCategoryByCategoryId(categoryId: number): Promise<CategoryModel | null> {
+  const category = await db.getRepository(Category)
+    .findOneBy({
+      id: categoryId,
+    });
+
+  if (!category) return null;
+
+  return {
+    id: category.id,
+    name: category.name,
+    categoryType: CategoryType.Default,
+  };
+}
+
+export async function findUserDefinedCategoryByCategoryIdAndUserId(categoryId: number, userId: number): Promise<CategoryModel> {
   const category = await db.getRepository(Category)
     .createQueryBuilder('cat')
     .leftJoinAndSelect('user_category', 'uscat', 'cat.id = uscat.category_id')
