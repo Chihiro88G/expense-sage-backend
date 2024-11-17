@@ -47,6 +47,7 @@ export async function findDefaultCategoryByCategoryId(categoryId: number): Promi
   const category = await db.getRepository(Category)
     .findOneBy({
       id: categoryId,
+      category_type: 0,
     });
 
   if (!category) return null;
@@ -64,6 +65,7 @@ export async function findUserDefinedCategoryByCategoryIdAndUserId(categoryId: n
     .leftJoinAndSelect('user_category', 'uscat', 'cat.id = uscat.category_id')
     .where('uscat.user_id = :userId', { userId: userId })
     .andWhere('cat.id = :categoryId', { categoryId: categoryId})
+    .andWhere('cat.category_type = 1')
     .getOne();
 
   if (!category) throw new Error('category not found');
@@ -91,6 +93,9 @@ export async function update(categoryId: number, categoryName: string): Promise<
 }
 
 export async function create(userId: number, categoryName: string): Promise<void> {
+  const user = await db.getRepository(Users).findOneBy({ id: userId });
+  if (!user) throw new Error('no user found');
+
   const newCategory = new Category();
   newCategory.name = categoryName;
   newCategory.category_type = 1;
@@ -98,9 +103,6 @@ export async function create(userId: number, categoryName: string): Promise<void
   newCategory.modified_at = new Date();
 
   const savedCategory = await db.getRepository(Category).save(newCategory);
-
-  const user = await db.getRepository(Users).findOneBy({ id: userId });
-  if (!user) throw new Error('no user found');
 
   const newUserCategory = new UserCategory();
   newUserCategory.category = savedCategory;
