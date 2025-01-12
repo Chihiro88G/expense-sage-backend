@@ -20,25 +20,18 @@ export async function findAllByUser(user: UserType): Promise<CategoryModel[]> {
 
   if (!userDefinedCategories) throw new Error('error fetching user defined categories');
 
-  const categories: CategoryModel[] = [];
-
-  defaultCategories.forEach((dcat: Category) => {
-    const category = {
-      id: dcat.id,
-      name: dcat.name,
+  const categories: CategoryModel[] = [
+    ...defaultCategories.map((category: Category) => ({
+      id: category.id,
+      name: category.name,
       categoryType: CategoryType.Default,
-    };
-    categories.push(category);
-  });
-
-  userDefinedCategories.forEach((dcat: Category) => {
-    const category = {
-      id: dcat.id,
-      name: dcat.name,
+    })),
+    ...userDefinedCategories.map((category: Category) => ({
+      id: category.id,
+      name: category.name,
       categoryType: CategoryType.UserCreated,
-    };
-    categories.push(category);
-  });
+    }))
+  ];
 
   return categories;
 }
