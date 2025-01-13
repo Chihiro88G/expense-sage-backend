@@ -2,7 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { UserCategory } from '../user_category/entity';
 
 @Entity()
-export class Category {
+export class Users {
   @PrimaryGeneratedColumn()
     id: number;
 
@@ -14,10 +14,17 @@ export class Category {
     name: string;
 
   @Column({
-    type: 'integer',
+    type: 'varchar',
+    length: 255,
     nullable: false,
   })
-    category_type: number;
+    auth0_id: string;
+
+  @Column({
+    type: 'integer',
+    nullable: true,
+  })
+    phone: number | null;
 
   @Column({
     type: 'timestamp',
@@ -31,6 +38,6 @@ export class Category {
   })
     modified_at: Date;
 
-  @OneToMany(() => UserCategory, userCategory => userCategory.category)
-    userCategoriess: UserCategory[];
+  @OneToMany(() => UserCategory, userCategory => userCategory.user)
+    userCategories: UserCategory[];
 }

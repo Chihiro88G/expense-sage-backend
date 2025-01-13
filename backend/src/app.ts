@@ -1,16 +1,24 @@
 import express, { Express, Request, Response } from 'express';
 import 'dotenv/config';
-import db, { initDb } from './database';
-import { Category } from './category/entity';
+import { initDb } from './database';
+import { routes } from './routes';
 
 await initDb();
 
-const app = express();
+const app: Express = express();
+app.use(express.json());
 
-console.log(await db.getRepository(Category).find());
-
-app.get('/', (req, res) => {
+app.get('/', (req: Request, res: Response) => {
   res.send('hello world');
 });
 
-app.listen(process.env.PORT, () => console.log('server running on: ' + process.env.PORT));
+app.use(routes);
+
+app.listen(process.env.PORT, () => {
+  console.log('server running on: ' + process.env.PORT);
+});
+
+app.use((err: Error, req: Request, res: Response) => {
+  console.error(err.stack);
+  res.status(500).send({ errors: [{ message: err.message || 'Internal Server Error 500' }] });
+});
