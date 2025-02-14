@@ -13,3 +13,4 @@ routes.delete('/user/:userId/category/:categoryId', category.delete);
 
 // budget
 routes.get('/user/:userId/budget', budget.get);
+routes.get('/user/:userId/budget/:budgetId', budget.getOne);

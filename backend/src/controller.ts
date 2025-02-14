@@ -19,4 +19,10 @@ export default class Controller {
     if (!categoryName) throw new Error('no category name specified');
     return categoryName;
   }
+
+  getBudgetIdInRequest(req: Request): number {
+    const budgetId = req.params.budgetId;
+    if (!budgetId) throw new Error('budget id not found');
+    return parseInt(budgetId, 10);
+  }
 }
