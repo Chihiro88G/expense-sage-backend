@@ -1,4 +1,5 @@
 import { Request } from 'express';
+import { NewBudget } from './budget/type';
 
 export default class Controller {
 
@@ -24,5 +25,23 @@ export default class Controller {
     const budgetId = req.params.budgetId;
     if (!budgetId) throw new Error('budget id not found');
     return parseInt(budgetId, 10);
+  }
+
+  getBudgetInRequest(req: Request): NewBudget {
+    const year = req.body.year;
+    const month = req.body.month;
+    const amount = req.body.amount;
+    const categoryId = req.body.categoryId;
+    const userId = req.body.userId;
+
+    if (!year || !month || !amount || !categoryId || !userId) throw new Error('incomplete budget info');
+
+    return {
+      year: year,
+      month: month,
+      amount: amount,
+      categoryId: categoryId,
+      userId: userId,
+    };
   }
 }

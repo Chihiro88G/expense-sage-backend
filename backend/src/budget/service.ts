@@ -1,8 +1,9 @@
 import { findOneByCategoryId } from '../category/service';
 import db from '../database';
+import { Users } from '../user/entity';
 import { UserType } from '../user/type';
 import { Budget } from './entity';
-import { BudgetModel } from './type';
+import { BudgetModel, NewBudget } from './type';
 
 
 export async function findAllByUser(user: UserType): Promise<BudgetModel[]> {
@@ -55,3 +56,19 @@ export async function findOneByUserAndBudgetId(user: UserType, budgetId: number)
   };
 }
 
+export async function create(budgetObj: NewBudget): Promise<void> {
+  const user = await db.getRepository(Users).findOneBy({ id: budgetObj.userId });
+  if (!user) throw new Error('no user found');
+
+  const monthLength = String(budgetObj.month).length;
+
+  const newBudget = new Budget();
+  newBudget.year_month = monthLength === 1 ? parseInt(`${budgetObj.year}0${budgetObj.month}`) : parseInt(`${budgetObj.year}${budgetObj.month}`);
+  newBudget.amount = budgetObj.amount;
+  newBudget.category_id = budgetObj.categoryId;
+  newBudget.user_id = budgetObj.userId;
+  newBudget.created_at = new Date();
+  newBudget.modified_at = new Date();
+
+  await db.getRepository(Budget).insert(newBudget);
+}

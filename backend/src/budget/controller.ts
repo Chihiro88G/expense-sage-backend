@@ -30,6 +30,18 @@ class BudgetController extends Controller {
       next(error);
     }
   };
+
+  post = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const budgetObj = this.getBudgetInRequest(req);
+
+      await service.create(budgetObj);
+      res.status(200).send();
+
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default new BudgetController();

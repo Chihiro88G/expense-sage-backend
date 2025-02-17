@@ -7,3 +7,11 @@ export type BudgetModel = {
   amount: number,
   category: CategoryItem,
 }
+
+export type NewBudget = {
+  year: string,
+  month: string,
+  amount: number,
+  categoryId: number,
+  userId: number,
+}
