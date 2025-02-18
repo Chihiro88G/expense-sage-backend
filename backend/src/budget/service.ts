@@ -3,7 +3,7 @@ import db from '../database';
 import { Users } from '../user/entity';
 import { UserType } from '../user/type';
 import { Budget } from './entity';
-import { BudgetModel, NewBudget } from './type';
+import { BudgetModel, NewBudget, UpdateBudget } from './type';
 
 
 export async function findAllByUser(user: UserType): Promise<BudgetModel[]> {
@@ -71,4 +71,24 @@ export async function create(budgetObj: NewBudget): Promise<void> {
   newBudget.modified_at = new Date();
 
   await db.getRepository(Budget).insert(newBudget);
+}
+
+export async function update(budgetId: number, budgetObj: UpdateBudget, userId: number): Promise<void> {
+  const user = await db.getRepository(Users).findOneBy({ id: userId });
+  if (!user) throw new Error('no user found');
+
+  const budgetToUpdate = await db.getRepository(Budget)
+    .findOneBy({
+      id: budgetId
+    });
+
+  if (!budgetToUpdate) throw new Error('no budget found');
+
+  const monthLength = String(budgetObj.month).length;
+
+  budgetToUpdate.year_month = monthLength === 1 ? parseInt(`${budgetObj.year}0${budgetObj.month}`) : parseInt(`${budgetObj.year}${budgetObj.month}`);
+  budgetToUpdate.amount = budgetObj.amount;
+  budgetToUpdate.modified_at = new Date();
+
+  await db.getRepository(Budget).save(budgetToUpdate);
 }

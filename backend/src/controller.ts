@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { NewBudget } from './budget/type';
+import { NewBudget, UpdateBudget } from './budget/type';
 
 export default class Controller {
 
@@ -42,6 +42,20 @@ export default class Controller {
       amount: amount,
       categoryId: categoryId,
       userId: userId,
+    };
+  }
+
+  getUpdatedBudget(req: Request): UpdateBudget {
+    const year = req.body.year;
+    const month = req.body.month;
+    const amount = req.body.amount;
+
+    if (!year || !month || !amount) throw new Error('incomplete budget info to update');
+
+    return {
+      year: year,
+      month: month,
+      amount: amount,
     };
   }
 }

@@ -42,6 +42,20 @@ class BudgetController extends Controller {
       next(error);
     }
   };
+
+  patch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const budgetId = this.getBudgetIdInRequest(req);
+      const budgetObj = this.getUpdatedBudget(req);
+      const userId = this.getUserIdInRequest(req);
+
+      await service.update(budgetId, budgetObj, userId);
+      res.status(200).send();
+
+    } catch (error) {
+      next(error);
+    }
+  };
 }
 
 export default new BudgetController();
