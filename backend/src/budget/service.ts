@@ -1,6 +1,5 @@
 import { findOneByCategoryId } from '../category/service';
 import db from '../database';
-import { Users } from '../user/entity';
 import { UserType } from '../user/type';
 import { Budget } from './entity';
 import { BudgetModel, NewBudget, UpdateBudget } from './type';
@@ -32,12 +31,12 @@ export async function findAllByUser(user: UserType): Promise<BudgetModel[]> {
   return budgets;
 }
 
-export async function findOneByUserAndBudgetId(user: UserType, budgetId: number): Promise<BudgetModel> {
+export async function findOneByUserIdAndBudgetId(userId: number, budgetId: number): Promise<BudgetModel> {
   const budgetRow = await db.getRepository(Budget).findOne(
     {
       where:
       {
-        user_id: user.id,
+        user_id: userId,
         id: budgetId,
       }
     }
@@ -56,17 +55,14 @@ export async function findOneByUserAndBudgetId(user: UserType, budgetId: number)
   };
 }
 
-export async function create(budgetObj: NewBudget): Promise<void> {
-  const user = await db.getRepository(Users).findOneBy({ id: budgetObj.userId });
-  if (!user) throw new Error('no user found');
-
+export async function create(budgetObj: NewBudget, userId: number): Promise<void> {
   const monthLength = String(budgetObj.month).length;
 
   const newBudget = new Budget();
   newBudget.year_month = monthLength === 1 ? parseInt(`${budgetObj.year}0${budgetObj.month}`) : parseInt(`${budgetObj.year}${budgetObj.month}`);
   newBudget.amount = budgetObj.amount;
   newBudget.category_id = budgetObj.categoryId;
-  newBudget.user_id = budgetObj.userId;
+  newBudget.user_id = userId;
   newBudget.created_at = new Date();
   newBudget.modified_at = new Date();
 
@@ -74,14 +70,15 @@ export async function create(budgetObj: NewBudget): Promise<void> {
 }
 
 export async function update(budgetId: number, budgetObj: UpdateBudget, userId: number): Promise<void> {
-  const user = await db.getRepository(Users).findOneBy({ id: userId });
-  if (!user) throw new Error('no user found');
-
-  const budgetToUpdate = await db.getRepository(Budget)
-    .findOneBy({
-      id: budgetId
-    });
-
+  const budgetToUpdate = await db.getRepository(Budget).findOne(
+    {
+      where:
+      {
+        user_id: userId,
+        id: budgetId,
+      }
+    }
+  );
   if (!budgetToUpdate) throw new Error('no budget found');
 
   const monthLength = String(budgetObj.month).length;
@@ -91,4 +88,19 @@ export async function update(budgetId: number, budgetObj: UpdateBudget, userId: 
   budgetToUpdate.modified_at = new Date();
 
   await db.getRepository(Budget).save(budgetToUpdate);
+}
+
+export async function remove(budgetId: number, userId: number) {
+  const budgetToDelete = await db.getRepository(Budget).findOne(
+    {
+      where:
+      {
+        user_id: userId,
+        id: budgetId,
+      }
+    }
+  );
+  if (!budgetToDelete) throw new Error('no budget found');
+
+  await db.getRepository(Budget).remove(budgetToDelete);
 }

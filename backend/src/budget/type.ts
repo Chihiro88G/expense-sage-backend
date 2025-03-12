@@ -13,7 +13,6 @@ export type NewBudget = {
   month: string,
   amount: number,
   categoryId: number,
-  userId: number,
 }
 
 export type UpdateBudget = {

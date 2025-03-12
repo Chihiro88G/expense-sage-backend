@@ -22,7 +22,7 @@ class BudgetController extends Controller {
       const budgetId = this.getBudgetIdInRequest(req);
       const userId = this.getUserIdInRequest(req);
       const user = await userService.findOneById(userId);
-      const budget = await service.findOneByUserAndBudgetId(user, budgetId);
+      const budget = await service.findOneByUserIdAndBudgetId(user.id, budgetId);
 
       res.status(200).json(budget);
 
@@ -33,9 +33,12 @@ class BudgetController extends Controller {
 
   post = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
     try {
-      const budgetObj = this.getBudgetInRequest(req);
+      const newBudget = this.getBudgetInRequest(req);
+      const userId = this.getUserIdInRequest(req);
 
-      await service.create(budgetObj);
+      const user = await userService.findOneById(userId);
+
+      await service.create(newBudget, user.id);
       res.status(200).send();
 
     } catch (error) {
@@ -49,7 +52,24 @@ class BudgetController extends Controller {
       const budgetObj = this.getUpdatedBudget(req);
       const userId = this.getUserIdInRequest(req);
 
-      await service.update(budgetId, budgetObj, userId);
+      const user = await userService.findOneById(userId);
+
+      await service.update(budgetId, budgetObj, user.id);
+      res.status(200).send();
+
+    } catch (error) {
+      next(error);
+    }
+  };
+
+  delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+    try {
+      const budgetId = this.getBudgetIdInRequest(req);
+      const userId = this.getUserIdInRequest(req);
+
+      const user = await userService.findOneById(userId);
+
+      await service.remove(budgetId, user.id);
       res.status(200).send();
 
     } catch (error) {

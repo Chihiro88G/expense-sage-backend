@@ -32,16 +32,14 @@ export default class Controller {
     const month = req.body.month;
     const amount = req.body.amount;
     const categoryId = req.body.categoryId;
-    const userId = req.body.userId;
 
-    if (!year || !month || !amount || !categoryId || !userId) throw new Error('incomplete budget info');
+    if (!year || !month || !amount || !categoryId) throw new Error('incomplete budget info');
 
     return {
       year: year,
       month: month,
       amount: amount,
       categoryId: categoryId,
-      userId: userId,
     };
   }
 
