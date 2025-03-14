@@ -1,5 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import { UserCategory } from '../user_category/entity';
+import { Budget } from '../budget/entity';
 
 @Entity()
 export class Users {
@@ -40,4 +41,7 @@ export class Users {
 
   @OneToMany(() => UserCategory, userCategory => userCategory.user)
     userCategories: UserCategory[];
+
+  @OneToMany(() => Budget, budget => budget.user_id)
+    budgets: Budget[];
 }

@@ -2,7 +2,6 @@ DROP TABLE public.budget;
 
 CREATE TABLE public.budget (
   id SERIAL PRIMARY KEY,
-  name VARCHAR(50) NOT NULL,
   year_month INT NOT NULL,
   user_id INT NOT NULL,
   category_id INT NOT NULL,

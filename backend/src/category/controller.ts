@@ -60,7 +60,6 @@ class CategoryController extends Controller {
       const categoryName = this.getCategoryNameInRequest(req);
 
       await service.create(userId, categoryName);
-
       res.status(200).send();
 
     } catch (error) {

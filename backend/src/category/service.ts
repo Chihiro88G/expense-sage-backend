@@ -3,11 +3,11 @@ import { Users } from '../user/entity';
 import { UserType } from '../user/type';
 import { UserCategory } from '../user_category/entity';
 import { Category } from './entity';
-import { CategoryModel, CategoryType } from './type';
+import { CategoryItem, CategoryModel, CategoryType } from './type';
 
 export async function findAllByUser(user: UserType): Promise<CategoryModel[]> {
   const defaultCategories = await db.getRepository(Category).find(
-    {where: { category_type: 0 }}
+    { where: { category_type: 0 }}
   );
 
   if (!defaultCategories) throw new Error('error fetching default categories');
@@ -68,6 +68,20 @@ export async function findUserDefinedCategoryByCategoryIdAndUserId(categoryId: n
     id: category.id,
     name: category.name,
     categoryType: CategoryType.UserCreated,
+  };
+}
+
+export async function findOneByCategoryId(categoryId: number): Promise<CategoryItem> {
+  const category = await db.getRepository(Category)
+    .findOneBy({
+      id: categoryId,
+    });
+
+  if (!category) throw new Error('category not found');
+
+  return {
+    id: category.id,
+    name: category.name,
   };
 }
 
