@@ -1,10 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
-import Controller from '../controller';
+import Controller, { ExpressParams } from '../controller';
 import * as service from './service';
 import * as userService from '../user/service';
 
 class BudgetController extends Controller {
-  get = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  get = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const userId = this.getUserIdInRequest(req);
       const user = await userService.findOneById(userId);
@@ -17,7 +16,7 @@ class BudgetController extends Controller {
     }
   };
 
-  getOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getOne = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const budgetId = this.getBudgetIdInRequest(req);
       const userId = this.getUserIdInRequest(req);
@@ -31,7 +30,7 @@ class BudgetController extends Controller {
     }
   };
 
-  post = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  post = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const newBudget = this.getBudgetInRequest(req);
       const userId = this.getUserIdInRequest(req);
@@ -46,7 +45,7 @@ class BudgetController extends Controller {
     }
   };
 
-  patch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  patch = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const budgetId = this.getBudgetIdInRequest(req);
       const budgetObj = this.getUpdatedBudget(req);
@@ -62,7 +61,7 @@ class BudgetController extends Controller {
     }
   };
 
-  delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  delete = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const budgetId = this.getBudgetIdInRequest(req);
       const userId = this.getUserIdInRequest(req);

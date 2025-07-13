@@ -1,10 +1,9 @@
-import { NextFunction, Request, Response } from 'express';
-import Controller from '../controller';
+import Controller, { ExpressParams } from '../controller';
 import * as userService from '../user/service';
 import * as service from './service';
 
 class CategoryController extends Controller {
-  get = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  get = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const userId = this.getUserIdInRequest(req);
       const user = await userService.findOneById(userId);
@@ -17,7 +16,7 @@ class CategoryController extends Controller {
     }
   };
 
-  getOne = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  getOne = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const userId = this.getUserIdInRequest(req);
       const categoryId = this.getCategoryIdInRequest(req);
@@ -38,7 +37,7 @@ class CategoryController extends Controller {
     }
   };
 
-  patch = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  patch = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const userId = this.getUserIdInRequest(req);
       const categoryId = this.getCategoryIdInRequest(req);
@@ -54,7 +53,7 @@ class CategoryController extends Controller {
     }
   };
 
-  post = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  post = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const userId = this.getUserIdInRequest(req);
       const categoryName = this.getCategoryNameInRequest(req);
@@ -67,7 +66,7 @@ class CategoryController extends Controller {
     }
   };
 
-  delete = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+  delete = async ({ req, res, next }: ExpressParams): Promise<void> => {
     try {
       const userId = this.getUserIdInRequest(req);
       const categoryId = this.getCategoryIdInRequest(req);

@@ -1,7 +1,18 @@
-import { Request } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import { NewBudget, UpdateBudget } from './budget/type';
 
-export default class Controller {
+export interface ExpressParams {
+  req: Request,
+  res: Response,
+  next: NextFunction
+}
+
+export default abstract class Controller {
+  abstract get(params: ExpressParams): Promise<void>;
+  abstract getOne(params: ExpressParams): Promise<void>;
+  abstract patch(params: ExpressParams): Promise<void>;
+  abstract post(params: ExpressParams): Promise<void>;
+  abstract delete(params: ExpressParams): Promise<void>;
 
   getUserIdInRequest(req: Request): number {
     const userId = req.params.userId;
